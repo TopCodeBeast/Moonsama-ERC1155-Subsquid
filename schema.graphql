@@ -1,0 +1,56 @@
+type Token @entity {
+  id: ID!
+  numericId: BigInt!
+  owner: Owner
+  uri: String
+  meta: Metadata
+  transfers: [Transfer!]! @derivedFrom(field: "token")
+  contract: Contract
+}
+
+type Metadata @entity {
+  id: ID!
+  name: String
+  description: String
+  image: String
+  attributes: [Attribute!]
+  animationUrl: String
+  type: String
+}
+
+type Attribute @jsonField {
+  display: String
+  trait: String
+  value: String!
+}
+
+type Owner @entity {
+  id: ID!
+  ownedTokens: [Token!]! @derivedFrom(field: "owner")
+  balance: BigInt
+}
+
+type Contract @entity {
+  # 1
+  id: ID!
+  name: String
+  symbol: String
+  totalSupply: BigInt
+  mintedTokens: [Token!]! @derivedFrom(field: "contract")
+  contractURI: String
+  contractURIUpdated: BigInt
+  address: String
+  decimals: Int
+}
+
+type Transfer @entity {
+  id: ID!
+  token: Token!
+  # Empty from is minting
+  from: Owner
+  # Empty to is burning
+  to: Owner
+  timestamp: BigInt!
+  block: BigInt!
+  transactionHash: String!
+}
